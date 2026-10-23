@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Darsoo AI – موقع الدروس الذكي</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--tx:#1b1f2a;--mut:#667085;--pri:#4f46e5;--pri2:#eef0ff;--bd:#e3e6ee;--ok:#12805c;--bad:#c0392b;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12141c;--card:#1b1e29;--tx:#eceef5;--mut:#9aa1b5;--pri:#818cf8;--pri2:#262a45;--bd:#2c3042;--ok:#4ade80;--bad:#f87171;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#12141c;--card:#1b1e29;--tx:#eceef5;--mut:#9aa1b5;--pri:#818cf8;--pri2:#262a45;--bd:#2c3042;--ok:#4ade80;--bad:#f87171;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;line-height:1.6}
+header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--card);border-bottom:1px solid var(--bd);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+h1{font-size:18px;margin:0}h1 span{color:var(--pri)}
+nav{display:flex;gap:6px}
+nav button,.btn{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;padding:8px 12px;font:inherit;font-size:14px;cursor:pointer}
+nav button.on,.btn.pri{background:var(--pri);color:#fff;border-color:var(--pri)}
+.btn:disabled{opacity:.5;cursor:default}
+main{max-width:980px;margin:0 auto;padding:16px}
+.view{display:none}.view.on{display:block}
+.drop{border:2px dashed var(--bd);border-radius:16px;padding:28px 16px;text-align:center;background:var(--card);cursor:pointer}
+.drop.over{border-color:var(--pri);background:var(--pri2)}
+.drop b{display:block;font-size:17px;margin-bottom:4px}.mut{color:var(--mut);font-size:13px}
+textarea,input[type=text],select{width:100%;font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:10px}
+.row{display:flex;gap:8px;margin-top:10px}.row>*{flex:1}
+.lib{margin-top:16px;display:grid;gap:8px}
+.lesson{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px 12px}
+.lesson .n{flex:1;min-width:0}.lesson .n b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lesson button{color:var(--bad)}
+.chat{display:grid;grid-template-columns:230px 1fr;gap:12px}
+@media(max-width:700px){.chat{grid-template-columns:1fr}}
+.side{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px;align-self:start}
+.side label{display:flex;gap:8px;align-items:center;padding:4px 0;font-size:14px}
+.box{background:var(--card);border:1px solid var(--bd);border-radius:12px;display:flex;flex-direction:column;min-height:55vh}
+#msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;max-height:60vh}
+.m{max-width:88%;padding:10px 12px;border-radius:14px;white-space:pre-wrap;word-wrap:break-word}
+.m.u{align-self:flex-start;background:var(--pri);color:#fff}
+.m.a{align-self:flex-end;background:var(--pri2)}
+.src{margin-top:8px;padding-top:6px;border-top:1px solid var(--bd);font-size:12px;color:var(--mut)}
+.bar{display:flex;gap:8px;padding:10px;border-top:1px solid var(--bd)}
+.bar input{flex:1}.tools{display:flex;gap:6px;flex-wrap:wrap;padding:8px 10px 0}
+.tools .btn{font-size:13px;padding:5px 10px}
+.empty{color:var(--mut);text-align:center;padding:24px}
+</style>
+</head>
+<body>
+<header><h1>Darsoo <span>AI</span> 📚</h1>
+<nav><button data-v="lib" class="on">الدروس</button><button data-v="chat">الدردشة</button><button data-v="set">الإعدادات</button></nav></header>
+<main>
+<section id="lib" class="view on">
+ <div class="drop" id="drop"><b>⬆️ رفع درس جديد</b><span class="mut">اسحب الملف هنا أو اضغط للاختيار (TXT / MD / CSV)</span>
+  <input type="file" id="file" accept=".txt,.md,.csv,text/plain" multiple hidden></div>
+ <div style="margin-top:12px"><input type="text" id="ptitle" placeholder="أو الصق نص الدرس هنا: عنوان الدرس">
+  <textarea id="ptext" rows="4" placeholder="نص الدرس…" style="margin-top:8px"></textarea>
+  <button class="btn pri" id="padd" style="margin-top:8px">إضافة الدرس</button></div>
+ <div class="mut" style="margin-top:10px">ملفات PDF و Word و PowerPoint تحتاج خادماً خلفياً (انظر الملاحظة في الأسفل). هنا يمكنك نسخ النص ولصقه.</div>
+ <div class="row"><button class="btn" id="export">⬇️ تصدير نسخة احتياطية</button><button class="btn" id="importBtn">⬆️ استيراد نسخة</button><input id="importFile" type="file" accept=".json,application/json" hidden></div><div class="lib" id="list"></div>
+</section>
+<section id="chat" class="view">
+ <div class="chat">
+  <div class="side"><b>الدروس المختارة</b><div id="sel"></div></div>
+  <div class="box"><div id="msgs"><div class="empty">اطرح سؤالاً، وسأجيب فقط من دروسك.</div></div>
+   <div class="tools"><button class="btn" id="quiz">🎯 اسألني باش نراجع</button><button class="btn" id="sum">📝 ملخص الدرس</button></div>
+   <div class="bar"><input type="text" id="q" placeholder="اكتب سؤالك…"><button class="btn pri" id="send">إرسال</button></div></div>
+ </div>
+</section>
+<section id="set" class="view">
+ <label>لغة الجواب</label>
+ <select id="lang"><option value="العربية">العربية</option><option value="Français">Français</option><option value="English">English</option></select>
+ <p class="mut" style="margin-top:16px"><b>تنبيه:</b> هذه النسخة تعمل دون خادم أو مفتاح API؛ الدردشة تبحث عن المقاطع ذات الصلة وتعرضها، ولا تولّد إجابات لغوية حرة. البيانات محفوظة في هذا المتصفح فقط.</p><p class="mut">القواعد المطبقة: الجواب من المقاطع المسترجعة فقط، وإذا لم توجد معلومة ذات صلة يكون الجواب: «هاد المعلومة ما كايناش فالدروس اللي عطيتيني». تُحفظ الدروس في متصفحك فقط.</p>
+ <p class="mut"><b>ملاحظة:</b> هذه نسخة تعمل داخل المتصفح (بحث بالكلمات المفتاحية بدل Embeddings، وتخزين محلي بدل Supabase). النسخة الكاملة (PDF، OCR، Vector DB، تسجيل الدخول) تحتاج خادم FastAPI كما في الوصف.</p>
+</section>
+</main>
+<script>
+var DB=[],SEL={},LANG="العربية",NOANS="هاد المعلومة ما كايناش فالدروس اللي عطيتيني";
+var $=function(i){return document.getElementById(i)};
+function save(){try{localStorage.setItem("darsoo",JSON.stringify({DB:DB,SEL:SEL,LANG:LANG}));return true}catch(e){msg("تعذر حفظ البيانات؛ قد تكون مساحة التخزين ممتلئة. صدّر دروسك أو احذف بعض الملفات.","a");return false}}
+function load(){try{var d=JSON.parse(localStorage.getItem("darsoo")||"null");if(d){DB=d.DB||[];SEL=d.SEL||{};LANG=d.LANG||LANG}}catch(e){}}
+function tok(s){return (s.toLowerCase().match(/[\p{L}\p{N}]+/gu)||[]).map(function(w){return w.length>3&&w.indexOf("ال")==0?w.slice(2):w}).filter(function(w){return w.length>1})}
+function chunk(text){var w=text.split(/\s+/).filter(Boolean),out=[],S=400,O=50;
+ for(var i=0;i<w.length;i+=S-O){out.push(w.slice(i,i+S).join(" "));if(i+S>=w.length)break}return out}
+function addLesson(title,text){text=text.trim();if(!text){return}
+ var ch=chunk(text);DB.push({id:Date.now()+Math.random(),title:title||"درس بدون عنوان",date:new Date().toLocaleDateString("ar-MA"),words:text.split(/\s+/).length,chunks:ch});
+ SEL[DB[DB.length-1].id]=true;save();render()}
+function render(){var L=$("list");L.innerHTML="";
+ if(!DB.length)L.innerHTML='<div class="empty">ما كاين حتى درس بعد.</div>';
+ DB.forEach(function(d){var e=document.createElement("div");e.className="lesson";
+  var n=document.createElement("div");n.className="n";var b=document.createElement("b");b.textContent=d.title;
+  var m=document.createElement("span");m.className="mut";m.textContent=d.words+" كلمة · "+d.chunks.length+" مقطع · "+d.date;
+  n.appendChild(b);n.appendChild(m);var x=document.createElement("button");x.className="btn";x.textContent="حذف";
+  x.onclick=function(){DB=DB.filter(function(z){return z.id!==d.id});delete SEL[d.id];save();render()};
+  e.appendChild(n);e.appendChild(x);L.appendChild(e)});
+ var S=$("sel");S.innerHTML="";
+ DB.forEach(function(d){var l=document.createElement("label");var c=document.createElement("input");c.type="checkbox";c.checked=!!SEL[d.id];
+  c.onchange=function(){SEL[d.id]=c.checked;save()};var s=document.createElement("span");s.textContent=d.title;l.appendChild(c);l.appendChild(s);S.appendChild(l)});
+ if(!DB.length)S.innerHTML='<span class="mut">أضف درساً أولاً</span>';
+ $("lang").value=LANG}
+function pool(){var r=[];DB.forEach(function(d){if(SEL[d.id])d.chunks.forEach(function(c,i){r.push({t:d.title,i:i+1,c:c,tk:tok(c)})})});return r}
+function search(q,k){var P=pool(),qt=tok(q);if(!P.length||!qt.length)return[];var N=P.length,df={};
+ qt.forEach(function(w){df[w]=P.filter(function(p){return p.tk.indexOf(w)>-1}).length});
+ P.forEach(function(p){var s=0;qt.forEach(function(w){var f=p.tk.filter(function(x){return x===w}).length;if(f)s+=(f/(f+1.5))*Math.log(1+N/(1+df[w]))});p.s=s});
+ return P.filter(function(p){return p.s>0}).sort(function(a,b){return b.s-a.s}).slice(0,k)}
+function msg(t,cls,src){var e=document.createElement("div");e.className="m "+cls;e.textContent=t;
+ if(src){var s=document.createElement("div");s.className="src";s.textContent=src;e.appendChild(s)}
+ var M=$("msgs");var em=M.querySelector(".empty");if(em)em.remove();M.appendChild(e);M.scrollTop=M.scrollHeight;return e}
+var SYS=function(ctx){return "أنت مساعد دراسي. أجب فقط من خلال النصوص التالية المقدمة لك. إذا لم تجد الجواب في النصوص، قل بالضبط: '"+NOANS+"'. لا تستخدم معلوماتك الخارجية أبدا. اذكر مصدر كل معلومة بالشكل [اسم الدرس، مقطع n]. اكتب الجواب بلغة: "+LANG+".\nالنصوص:\n"+ctx};
+async function ask(prompt,ctx,el){
+  // نسخة مستقلة بلا API: تعرض المقاطع الأقرب من الدروس، ولا تدّعي توليد إجابة بالذكاء الاصطناعي.
+  try {
+    var parts=ctx.split(/\n---\n/).map(function(x){return x.trim()}).filter(Boolean);
+    var query=prompt.replace(/^السؤال:\s*/,'').trim();
+    if(/^ولّد 5 أسئلة/.test(prompt)){
+      var lines=parts.map(function(p){return p.split('\n').slice(1).join('\n').trim()}).filter(Boolean);
+      var sentences=lines.join(' ').split(/[.!؟?\n]+/).map(function(x){return x.trim()}).filter(function(x){return x.length>25});
+      el.textContent=sentences.slice(0,5).map(function(x,i){return (i+1)+'. اشرح أو لخّص الفكرة التالية: '+x+'\nالجواب: راجع الفقرة الأصلية في الدرس.'}).join('\n\n') || NOANS;
+      return;
+    }
+    if(/^اكتب ملخصاً/.test(prompt)){
+      el.textContent=parts.map(function(p){return p.length>900?p.slice(0,900)+'…':p}).join('\n\n') || NOANS;
+      return;
+    }
+    var hits=search(query,5);
+    if(!hits.length){el.textContent=NOANS;return}
+    el.textContent='وجدت هذه المقاطع الأقرب لسؤالك من الدروس المحددة. راجعها لاستخراج الجواب:\n\n'+hits.map(function(p){return '[ '+p.t+'، مقطع '+p.i+' ]\n'+p.c}).join('\n\n──────────\n\n');
+  } catch(e) { el.textContent='وقع خطأ أثناء البحث. حاول مرة أخرى.'; }
+}
+function ctxOf(h){return h.map(function(p){return "[الدرس: "+p.t+"، مقطع "+p.i+"]\n"+p.c}).join("\n---\n")}
+async function send(){var q=$("q").value.trim();if(!q)return;$("q").value="";msg(q,"u");
+ var h=search(q,5);if(!h.length){msg(NOANS,"a");return}
+ var el=msg("…","a");await ask("السؤال: "+q,ctxOf(h),el);
+ var s=document.createElement("div");s.className="src";s.textContent="المصادر: "+h.map(function(p){return p.t+" (مقطع "+p.i+")"}).join(" · ");el.appendChild(s)}
+async function special(kind){var P=pool();if(!P.length){msg("اختر درساً أولاً.","a");return}
+ var h=P.slice(0,8);var el=msg("…","a");
+ await ask(kind==="quiz"?"ولّد 5 أسئلة مراجعة متنوعة من هذه النصوص فقط، مع الجواب المختصر تحت كل سؤال.":"اكتب ملخصاً منظماً بنقاط لهذه النصوص فقط.",ctxOf(h),el)}
+function files(fl){Array.prototype.forEach.call(fl,function(f){if(!/\.(txt|md|csv)$/i.test(f.name)){alert("الملف "+f.name+" غير مدعوم. استخدم TXT أو MD أو CSV.");return}if(f.size>2*1024*1024){alert("الملف "+f.name+" أكبر من 2MB. قسّمه إلى ملفات أصغر.");return}var r=new FileReader();r.onload=function(){addLesson(f.name.replace(/\.[^.]+$/,""),String(r.result))};r.onerror=function(){alert("تعذر قراءة الملف: "+f.name)};r.readAsText(f)});$("file").value=""}
+document.querySelectorAll("nav button").forEach(function(b){b.onclick=function(){document.querySelectorAll("nav button").forEach(function(x){x.classList.toggle("on",x===b)});
+ document.querySelectorAll(".view").forEach(function(v){v.classList.toggle("on",v.id===b.dataset.v)})}});
+var dz=$("drop");dz.onclick=function(){$("file").click()};$("file").onchange=function(e){files(e.target.files)};
+dz.ondragover=function(e){e.preventDefault();dz.classList.add("over")};dz.ondragleave=function(){dz.classList.remove("over")};
+dz.ondrop=function(e){e.preventDefault();dz.classList.remove("over");files(e.dataTransfer.files)};
+$("padd").onclick=function(){addLesson($("ptitle").value,$("ptext").value);$("ptitle").value="";$("ptext").value=""};
+$("send").onclick=send;$("q").onkeydown=function(e){if(e.key==="Enter")send()};
+$("quiz").onclick=function(){special("quiz")};$("sum").onclick=function(){special("sum")};
+$("lang").onchange=function(e){LANG=e.target.value;save()};
+$("export").onclick=function(){var blob=new Blob([JSON.stringify({DB:DB,SEL:SEL,LANG:LANG},null,2)],{type:"application/json"});var a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="darsoo-backup.json";a.click();setTimeout(function(){URL.revokeObjectURL(a.href)},1000)};
+$("importBtn").onclick=function(){$("importFile").click()};
+$("importFile").onchange=function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var d=JSON.parse(r.result);if(!Array.isArray(d.DB))throw Error("bad");DB=d.DB;SEL=d.SEL||{};LANG=d.LANG||"العربية";save();render();alert("تم استيراد النسخة الاحتياطية بنجاح.")}catch(err){alert("الملف غير صالح أو ليس نسخة Darsoo احتياطية.")}e.target.value=""};r.readAsText(f)};
+load();render();
+</script>
+</body>
+</html>
